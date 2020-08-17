@@ -7,7 +7,7 @@ import './item-list.css';
 
 
 export default class ItemList extends Component {
-
+    
     state = {
         itemList: null
     };
@@ -17,7 +17,6 @@ export default class ItemList extends Component {
         const { getData } = this.props;
 
         getData()
-            .getAllPeople()
             .then((itemList) => {
                 this.setState({
                     itemList
@@ -25,13 +24,17 @@ export default class ItemList extends Component {
             });
     }
 
+
     renderItems(arr) {
-        return arr.map(({id, name}) => {
+        return arr.map((item) => {
+            const {id} = item;
+            const label = this.props.children(item);
+
             return (
                 <li className="list-group-item"
                     key={id}
                     onClick={() => this.props.onItemSelected(id)}>
-                  {name}
+                  {label}
                 </li>
             );
         });

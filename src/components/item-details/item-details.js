@@ -1,59 +1,70 @@
 import React, { Component } from 'react';
 
-import './person-details.css';
 import SwapiService from "../../services/swapi-service";
-import Spinner from "../spinner";
 import ErrorButton from "../error-button";
 
-export default class PersonDetails extends Component {
+import './item-details.css';
+
+
+const Record = ({ item, field, label }) => {
+  return (
+      <li className="list-group-item">
+        <span className="term">{label}</span>
+        <span>{ item[field] }</span>
+      </li>
+  );
+};
+
+export {
+  Record
+};
+
+
+export default class ItemDetails extends Component {
 
   swapiService = new SwapiService();
 
   state = {
-    person: null
+    item: null,
+    image: null
   };
 
   componentDidMount() {
-    this.updatePerson();
+    this.updateItem();
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.personId !== prevProps.personId) {
-      this.updatePerson();
+  componentDidUpdate(prevProps) {
+    if (this.props.itemId !== prevProps.itemId) {
+      this.updateItem();
     }
   }
 
-  updatePerson() {
-    const {personId} = this.props;
-    if (!personId) {
+  updateItem() {
+    const {itemId, getData, getImageUrl} = this.props;
+    if (!itemId) {
       return;
     }
 
-    this.swapiService
-        .getPerson(personId)
-        .then((person) => {
-          this.setState({person})
+    getData(itemId)
+        .then((item) => {
+          this.setState({item})
         })
   }
 
   render() {
 
-    const {person} = this.state;
+    const {item, image} = this.state;
 
-    if (!person) {
-      return <Spinner/>
-    }
-
-    if (!this.state.person) {
+    if (!item) {
       return <span>Select a person from a list</span>
     }
 
-    const {id, name, gender, birthYear, eyeColor} = this.state.person;
+    const {id, name, gender, birthYear, eyeColor} = item;
 
     return (
       <div className="person-details card">
         <img className="person-image"
-          src={`https://starwars-visualguide.com/assets/img/characters/${id}.jpg`} />
+          src={image} />
 
         <div className="card-body">
           <h4>{name}</h4>
